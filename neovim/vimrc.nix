@@ -1,82 +1,11 @@
+{ withWriting ? false }:
+
+''
 " Running in nix, so ignore ~/.vim
 set runtimepath=$VIMRUNTIME
 
-call plug#begin('~/.vim/plugged')
-
-" Bare necessities
-Plug 'scrooloose/nerdtree'           " File manager
-Plug 'vim-syntastic/syntastic'       " Syntax checking
-Plug 'vim-airline/vim-airline'       " Status bar
-Plug 'tpope/vim-surround'            " Quick surround: ysiW etc.
-Plug 'tpope/vim-repeat'              " Use . for plugin command repetition, too
-Plug 'tpope/vim-commentary'          " Better comments (gc)
-Plug 'tpope/vim-unimpaired'          " Bracket mappings ([n, ]n, [c, ]c, etc.)
-Plug 'kien/rainbow_parentheses.vim'  " Pretty paren
-Plug 'neomake/neomake'               " Run make from Vim
-Plug 'mhinz/vim-signify'             " Git diff column
-Plug 'machakann/vim-highlightedyank' " Highlight yanked regions
-" Plug 'SirVer/ultisnips'              " Snippets engine
-" Plug 'honza/vim-snippets'            " Snippet db
-Plug 'flwyd/vim-conjoin'             " Smart line join (J)
-
-
-" Python development
-Plug 'python-mode/python-mode'
-Plug 'kh3phr3n/python-syntax'        " Better highlighting
-Plug 'Vimjas/vim-python-pep8-indent' " Better python indent
-Plug 'tmhedberg/SimpylFold'          " Better folding
-
-" Clojure development
-Plug 'tpope/vim-salve',     { 'for': 'clojure' }                          " Lein support
-Plug 'tpope/vim-dispatch',  { 'for': 'clojure' }                          " Run builds, tests, etc. in tmux, screen...
-Plug 'tpope/vim-fireplace', { 'for': 'clojure' }                          " REPL integration
-Plug 'guns/vim-sexp',       { 'for': 'clojure' }                          " Selection and movement for compound forms and elements
-                                                                          " (vaf selects entire form, vae selects element, vas
-                                                                          " string etc.), == for indenting the entire form etc.
-Plug 'tpope/vim-sexp-mappings-for-regular-people', { 'for': 'clojure' }   " dsb, csb, cse...
-Plug 'guns/vim-clojure-highlight',                 { 'for': 'clojure' }   " More highlighting
-Plug 'guns/vim-slamhound',                         { 'for': 'clojure' }   " Slamhound namespace mangler integration
-Plug 'guns/vim-clojure-static',                    { 'for': 'clojure' }   " EDN files support
-
-" Haskell development
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }               " indentation and syntax highlight
-Plug 'ndmitchell/ghcid', { 'for': 'haskell', 'rtp': 'plugins/nvim' } " IDE support
-" Use release branch (recommend)
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Swag
-Plug 'chriskempson/base16-vim'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'ryanoasis/vim-devicons'         " Pretty icons in NERDtree
-Plug 'calebsmith/vim-lambdify'        " -> <bling> defn -> lambda symbol. </bling>
-
-" Additional syntax support
-Plug 'pearofducks/ansible-vim'
-Plug 'cespare/vim-toml'
-Plug 'pboettch/vim-cmake-syntax'
-Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
-Plug 'LnL7/vim-nix'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'hashivim/vim-terraform'
-
-" Focus writing
-Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
-
-" Zettelkasten
-Plug 'vimwiki/vimwiki' | Plug 'michal-h21/vim-zettel'
-
-" Google stuff
-Plug 'google/vim-maktaba'
-Plug 'google/vim-codefmt'
-Plug 'google/vim-glaive'
-
-call plug#end()
-
-filetype plugin indent on
-
 """
-""" Vim general options start here
+""" General Vim config
 """
 
 " Default encoding
@@ -90,6 +19,7 @@ set ttyfast
 
 " Enable syntax highlighting
 syntax on
+
 " Don't highlight long lines
 set synmaxcol=256
 
@@ -168,10 +98,7 @@ set laststatus=2
 
 " Dark mode
 set background=dark
-if filereadable(expand("~/.vimrc_background"))
-  " let base16colorspace=256
-  source ~/.vimrc_background
-endif
+colorscheme base16-tomorrow-night
 
 " Highlight bad whitespace, folded regions and conceal
 highlight BadWhitespace ctermbg=red guibg=red
@@ -196,24 +123,8 @@ set swapfile
 " Persist the undo tree for each file
 set undofile
 
-" Patch required to honor double slash at end
-if has("patch-8.1.0251")
-    " Consolidate the writebackups -- not a big deal either way, since they
-    " usually get deleted, swaps and undo trees.
-    set backupdir^=~/.vim/backup//
-    set directory^=~/.vim/swap//
-    set undodir^=~/.vim/undo//
-end
-
 " Better diff algorithm
-if has("patch-8.1.0360")
-    set diffopt+=internal,algorithm:patience
-endif
-
-" Better encryption algorithm
-if !has("nvim")
-    set cryptmethod=blowfish2
-endif
+set diffopt+=internal,algorithm:patience
 
 """
 """ Vim filetype-specific config starts here
@@ -327,12 +238,6 @@ nnoremap <Right> :vertical resize -2<CR>
 " Use . for each line of visual block
 vnoremap . :normal .<CR>
 
-" Toggle folding with space comma
-nnoremap <leader>, za
-
-" Auto-reload Clojure source within REPL
-au Filetype clojure nmap <C-c><C-k> :Require<cr>
-
 " NERDTree shortcut
 map <C-k> :NERDTreeToggle<CR>
 map <C-a> :NERDTreeFind<CR>
@@ -342,12 +247,18 @@ map <Leader>1 :diffget LOCAL<CR>
 map <Leader>2 :diffget BASE<CR>
 map <Leader>3 :diffget REMOTE<CR>
 
-" Shorter reformat in paragraph
-nnoremap <leader>f gqip
-
 """
 """ Vim plugins config starts here
 """
+
+" Treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+  },
+}
+EOF
 
 " Airline
 let g:airline_powerline_fonts = 1
@@ -397,54 +308,6 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:syntastic_python_checkers=['flake8']
-
-" SimpylFold
-" See docstrings for folded code
-let g:SimpylFold_docstring_preview=1
-
-" Pymode
-let python_highlight_all = 1
-" Let syntastic do all linting
-let g:pymode_lint = 0
-let g:pymode_python = 'python3'
-let g:pymode_rope = 0
-let g:pymode_rope_autoimport = 0
-let g:pymode_rope_regenerate_on_write = 0
-
-" Goyo
-let g:goyo_width = 100
-
-" Auto-enable Limelight in Goyo
-function! s:goyo_enter()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status off
-    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-  endif
-  set noshowmode
-  set noshowcmd
-  set scrolloff=999
-  set scl=no
-  Limelight
-  " ...
-endfunction
-
-function! s:goyo_leave()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status on
-    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-  endif
-  set showmode
-  set showcmd
-  set scrolloff=5
-  set scl=yes
-  SignifyEnable
-  Limelight!
-  " ...
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 " fzf
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
@@ -461,28 +324,8 @@ nnoremap <silent> <Leader>p :call FZFOpen(':Buffers')<CR>
 nnoremap <silent> <C-s>b :call FZFOpen(':BLines')<CR>
 nnoremap <silent> <C-s>l :call FZFOpen(':Lines')<CR>
 
-" set completeopt=menuone,noinsert,preview
-
-" Markdown
-let g:vim_markdown_new_list_item_indent = 2
-let g:vim_markdown_frontmatter = 1
-
-" MarkdownPreview
-let g:mkdp_open_to_the_world = 1
-let g:mkdp_port = '8894'
-let g:mkdp_preview_options = {
-    \ 'disable_sync_scroll': 1,
-    \ }
-
-" VimWiki
-let g:vimwiki_list = [{'path': '~/git/zettelkasten/',
-                      \ 'syntax': 'markdown',
-                      \ 'ext': '.md'}]
-
-nnoremap <leader>zn :Zettelnew<space>
-
 " CoC
-"
+" set completeopt=menuone,noinsert,preview
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -528,3 +371,44 @@ xmap if <Plug>(coc-funcobj-i)
 omap if <Plug>(coc-funcobj-i)
 xmap af <Plug>(coc-funcobj-a)
 omap af <Plug>(coc-funcobj-a)
+''
++ (if withWriting then ''
+" Goyo
+let g:goyo_width = 100
+
+" Auto-enable Limelight in Goyo
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowmode
+  set noshowcmd
+  set scrolloff=999
+  set scl=no
+  Limelight
+  " ...
+endfunction
+
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  endif
+  set showmode
+  set showcmd
+  set scrolloff=5
+  set scl=yes
+  SignifyEnable
+  Limelight!
+  " ...
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+" Markdown
+let g:vim_markdown_new_list_item_indent = 2
+let g:vim_markdown_frontmatter = 1
+
+'' else "")
