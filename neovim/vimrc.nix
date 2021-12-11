@@ -2,7 +2,7 @@
 
 ''
 " Running in nix, so ignore ~/.vim
-set runtimepath=$VIMRUNTIME
+set runtimepath-=~/.vim
 
 """
 """ General Vim config

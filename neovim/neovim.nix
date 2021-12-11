@@ -63,10 +63,7 @@ in pkgs.neovim.override {
            tree-sitter-java
            tree-sitter-go
            tree-sitter-nix
-           # These don't compile on OS X
-           # tree-sitter-haskell
-           # tree-sitter-plugin
-           # tree-sitter-markdown
+           tree-sitter-python
          ]
         ))
       ]
@@ -79,7 +76,7 @@ in pkgs.neovim.override {
         vim-sexp-mappings-for-regular-people # dsb, csb, cse...
       ] else [])
       ++ (if withHaskell then [haskell-vim] else [])
-      ++ (if withWriting then [tabular vim-markdown goyo limelight] else [])
+      ++ (if withWriting then [tabular vim-markdown goyo-vim limelight-vim] else [])
       ++ (if withZettel then [vimwiki vim-zettel] else []);
     };
   };
