@@ -3,10 +3,12 @@
 , withHaskell ? false
 , withWriting ? false
 , withZettel  ? false
+, preVimRC ? ""
+, postVimRC ? ""
 }:
 
 let
-  vimRC       = import ./vimrc.nix { withWriting = withWriting; };
+  vimRC       = preVimRC + import ./vimrc.nix { withWriting = withWriting; } + postVimRC;
   vim-conjoin = pkgs.vimUtils.buildVimPlugin {
     name = "vim-conjoin";
     src = pkgs.fetchFromGitHub {
