@@ -8,17 +8,8 @@ set runtimepath-=~/.vim
 """ General Vim config
 """
 
-" Default encoding
-set encoding=utf-8
-
 " Disable mouse
 set mouse=""
-
-" Faster rendering (push more characters through to the terminal per cycle)
-set ttyfast
-
-" Enable syntax highlighting
-syntax on
 
 " Don't highlight long lines
 set synmaxcol=256
@@ -30,16 +21,9 @@ set t_ZR=[23m
 " Proper tabs (common languages/format)
 set tabstop=4
 set shiftwidth=4
-set smarttab
 set expandtab
 " Visually indent wrapped lines, thus preserving horizontal blocks of text
 set breakindent
-
-" Auto-update if changes are detected
-set autoread
-
-" Allow switching between dirty buffers without saving contents first
-set hidden
 
 " Show the matching part of the pair for [] {} and ()
 set showmatch
@@ -57,9 +41,6 @@ set rnu
 " Keep some lines within window when moving
 set scrolloff=5
 
-" Highlight matching words and move during search
-set hlsearch
-set incsearch
 " Smarter case-sensitive search
 set ignorecase
 set smartcase
@@ -72,9 +53,6 @@ if exists('+colorcolumn')
     set colorcolumn=80
     highlight ColorColumn ctermbg=red
 endif
-
-" Allow backspacing over everything in insert mode
-set backspace=indent,eol,start
 
 " Show a visual line under the cursor's current line (slows down a LOT)
 " set cursorline
@@ -89,12 +67,6 @@ set foldlevel=99
 
 " Use OS X clipboard
 set clipboard=unnamed
-
-" Show leader-key activation
-set showcmd
-
-" Always display status line
-set laststatus=2
 
 " Dark mode
 set background=dark
@@ -162,16 +134,11 @@ au InsertLeave * silent! set nopaste
 
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
   autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
   autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer black
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
   autocmd FileType nix AutoFormatBuffer nixpkgs-fmt
   autocmd FileType haskell AutoFormatBuffer ormolu
 augroup END
@@ -352,7 +319,6 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
-
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
