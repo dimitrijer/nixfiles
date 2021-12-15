@@ -27,6 +27,15 @@ let
       sha256 = "1gkwghwbgcwj1f1lxp2gk3vg2zqqigdr1h6p7sl34nzwhklvwpd0";
     };
   };
+  vim-codefmt = pkgs.vimUtils.buildVimPlugin {
+    name = "vim-codefmt";
+    src = pkgs.fetchFromGitHub {
+      owner = "dimitrijer";
+      repo = "vim-codefmt";
+      rev = "d71e62da8529dc80e76cfbcfb8ae5d3ff6f8bd6c";
+      sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
+    };
+  };
 in pkgs.neovim.override {
   configure = {
     customRC = vimRC;
@@ -56,7 +65,6 @@ in pkgs.neovim.override {
 
         ### Google
         vim-maktaba         # Google plugin library
-        vim-codefmt         # Auto-formatters
 
         ### Better syntax parsing
         (nvim-treesitter.withPlugins (
@@ -79,7 +87,11 @@ in pkgs.neovim.override {
       ] else [])
       ++ (if withHaskell then [haskell-vim] else [])
       ++ (if withWriting then [tabular vim-markdown goyo-vim limelight-vim] else [])
-      ++ (if withZettel then [vimwiki vim-zettel] else []);
+      ++ (if withZettel then [vimwiki vim-zettel] else [])
+      ++ [
+        # Custom vim-codefmt.
+        vim-codefmt
+      ];
     };
   };
 }
