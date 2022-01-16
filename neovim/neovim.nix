@@ -36,47 +36,45 @@ let
       sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
     };
   };
+  vimPluginsLua = with pkgs.vimPlugins; [
+    plenary-nvim
+    (nvim-treesitter.withPlugins (
+     plugins: with plugins; [
+       tree-sitter-c
+       tree-sitter-java
+       tree-sitter-go
+       tree-sitter-nix
+       tree-sitter-python
+     ]
+    ))
+    nvim-treesitter-textobjects
+    neomake
+    lualine-nvim
+    telescope.nvim
+    telescope-fzf-native.nvim
+    nvim-web-devicons
+    nvim-tree
+
+    vim-surround        # Quick surround (ysiW)
+    vim-repeat          # Use . for plugin command repetition, too
+    vim-commentary      # Better comments (gc)
+    vim-unimpaired      # Bracket mappings ([n, ]n, [c, ]c, etc.)
+    rainbow_parentheses # Pretty paren
+    vim-highlightedyank # Highlight yanked regions
+    vim-conjoin         # Smart line join (J)
+    vim-signify         # Git diff column
+    vim-lambdify        # -> <bling> defn -> lambda symbol. </bling>
+    vim-maktaba         # Google plugin library
+
+    kanagawa-nvim
+  ];
 in pkgs.neovim.override {
+  propagatedBuildInputs = [ pkgs.ripgrep ];
   configure = {
     customRC = vimRC;
 
     packages.myPlugins = with pkgs.vimPlugins; {
-      start = [
-        ### Bare necessities
-        nerdtree            # File manager
-        syntastic           # Syntax checker
-        coc-nvim            # LSP support
-        fzf-vim             # Quick search
-        vim-airline         # Status bar
-        vim-surround        # Quick surround (ysiW)
-        vim-repeat          # Use . for plugin command repetition, too
-        vim-commentary      # Better comments (gc)
-        vim-unimpaired      # Bracket mappings ([n, ]n, [c, ]c, etc.)
-        rainbow_parentheses # Pretty paren
-        vim-highlightedyank # Highlight yanked regions
-        vim-conjoin         # Smart line join (J)
-
-        ### Swag
-        vim-airline-themes
-        base16-vim
-        vim-devicons        # Pretty icons in NERDtree
-        vim-lambdify        # -> <bling> defn -> lambda symbol. </bling>
-        vim-signify         # Git diff column
-
-        ### Google
-        vim-maktaba         # Google plugin library
-
-        ### Better syntax parsing
-        (nvim-treesitter.withPlugins (
-         plugins: with plugins; [
-           tree-sitter-c
-           tree-sitter-java
-           tree-sitter-go
-           tree-sitter-nix
-           tree-sitter-python
-         ]
-        ))
-      ]
+      start = vimPluginsLua
       ++ (if withClojure then [
         vim-salve      # Lein support
         vim-dispatch   # REPL integration

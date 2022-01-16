@@ -70,7 +70,7 @@ set clipboard=unnamed
 
 " Dark mode
 set background=dark
-colorscheme base16-tomorrow-night
+colorscheme kanagawa
 
 " Highlight bad whitespace, folded regions and conceal
 highlight BadWhitespace ctermbg=red guibg=red
@@ -220,20 +220,37 @@ map <Leader>3 :diffget REMOTE<CR>
 
 " Treesitter
 lua <<EOF
-require'nvim-treesitter.configs'.setup {
+require('nvim-treesitter.configs').setup {
   highlight = {
     enable = true,
   },
 }
+require('nvim-tree').setup()
+local kanagawa = require('lualine.themes.kanagawa')
+for _, mode in pairs(kanagawa) do 
+ mode.a.gui = nil
+end
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = kanagawa,
+    component_separators = '|',
+    section_separators = '',
+  },
+  tabline = {
+      lualine_a = {'buffers'},
+      lualine_b = {},
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {'tabs'}
+  }
+}
 EOF
 
-" Airline
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'base16_tomorrow'
-" Enable the list of buffers
-let g:airline#extensions#tabline#enabled = 1
-" Show just the filename
-let g:airline#extensions#tabline#fnamemod = ':t'
+" Neomake
+call neomake#configure#automake('w')
+let g:neomake_open_list = 2
 
 " RainbowParen
 au VimEnter * RainbowParenthesesToggle
@@ -259,84 +276,11 @@ let g:rbpt_colorpairs = [
 let g:rbpt_max = 16
 let g:rbpt_loadcmd_toggle = 0
 
-" NERDTree
-let NERDTreeMapActivateNode='<space>'
-let g:NERDTreeNodeDelimiter = "\u00a0"
-" Open NERDTree automatically if no files were specified, and change focus to
-" new buffer.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | wincmd w | endif
-
-" Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-" fzf
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
-" Make open with fzf work while in NERD tree.
-function! FZFOpen(command_str)
-  if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
-    exe "normal! \<c-w>\<c-w>"
-  endif
-  exe 'normal! ' . a:command_str . "\<cr>"
-endfunction
-" Map a few common things to do with FZF.
-nnoremap <silent> <C-p> :call FZFOpen(':FZF -m')<CR>
-nnoremap <silent> <Leader>p :call FZFOpen(':Buffers')<CR>
-nnoremap <silent> <C-s>b :call FZFOpen(':BLines')<CR>
-nnoremap <silent> <C-s>l :call FZFOpen(':Lines')<CR>
-
-" CoC
-" set completeopt=menuone,noinsert,preview
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
+" Telescope
+nnoremap <silent> <C-p> <cmd>Telescope find_files<cr>
+nnoremap <silent> <C-s>g <cmd>Telescope live_grep<cr>
+nnoremap <silent> <C-s>b <cmd>Telescope buffers<cr>
+nnoremap <silent> <C-s>k <cmd>Telescope help_tags<cr>
 ''
 + (if withWriting then ''
 " Goyo
