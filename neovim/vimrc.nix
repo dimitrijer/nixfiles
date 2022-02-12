@@ -5,100 +5,6 @@
 set runtimepath-=~/.vim
 
 """
-""" General Vim config
-"""
-
-" Disable mouse
-set mouse=""
-
-" Don't highlight long lines
-set synmaxcol=256
-
-" Italics start/end
-set t_ZH=[3m
-set t_ZR=[23m
-
-" Proper tabs (common languages/format)
-set tabstop=4
-set shiftwidth=4
-set expandtab
-" Visually indent wrapped lines, thus preserving horizontal blocks of text
-set breakindent
-
-" Show the matching part of the pair for [] {} and ()
-set showmatch
-
-" Set default split behaviour
-set splitbelow
-set splitright
-
-" Show line numbers
-set number
-
-" Enable relative line numbers
-set rnu
-
-" Keep some lines within window when moving
-set scrolloff=5
-
-" Smarter case-sensitive search
-set ignorecase
-set smartcase
-
-" Assume s/../../g
-set gdefault
-
-" 80-line column
-if exists('+colorcolumn')
-    set colorcolumn=80
-    highlight ColorColumn ctermbg=red
-endif
-
-" Show a visual line under the cursor's current line (slows down a LOT)
-" set cursorline
-
-" Blink cursor on error instead of beeping
-set visualbell
-
-" Enable folding
-set foldmethod=indent
-" Do not fold regions automatically
-set foldlevel=99
-
-" Use OS X clipboard
-set clipboard=unnamed
-
-" Dark mode
-set background=dark
-colorscheme kanagawa
-
-" Highlight bad whitespace, folded regions and conceal
-highlight BadWhitespace ctermbg=red guibg=red
-highlight Folded ctermfg=darkgrey ctermbg=NONE
-highlight Conceal ctermfg=58 ctermbg=NONE
-" Needed for vim-markdown.
-highlight htmlItalic cterm=italic
-highlight htmlBold cterm=bold
-
-" Protect against crash-during-write...
-set writebackup
-" ... but do not persist backup after successful write
-set nobackup
-
-" Use rename-and-write-new method whenever safe
-set backupcopy=auto
-
-" Protect changes between writes. Default values of updatecount (200
-" keystrokes) and updatetime (4 seconds) are fine
-set swapfile
-
-" Persist the undo tree for each file
-set undofile
-
-" Better diff algorithm
-set diffopt+=internal,algorithm:patience
-
-"""
 """ Vim filetype-specific config starts here
 """
 
@@ -124,14 +30,19 @@ au Filetype sql setlocal tabstop=4 shiftwidth=4 expandtab
 au Filetype markdown,md,txt,text,asciidoc setlocal textwidth=79 foldenable autoindent
 au Filetype haskell setlocal tabstop=2 shiftwidth=2 expandtab
 au Filetype markdown setlocal conceallevel=2
+au Filetype markdown setlocal spell
+au Filetype gitcommit setlocal spell
+
 " Ensure tabs don't get converted to spaces in Makefiles.
 au FileType make setlocal noexpandtab
+
 " Make sure all types of requirements.txt files get syntax highlighting.
 au BufNewFile,BufRead requirements*.txt set syntax=python
 
 " Unset paste on InsertLeave.
 au InsertLeave * silent! set nopaste
 
+" Set common autoformatters.
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
   autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
@@ -183,9 +94,6 @@ function! BSkipQuickFix(command)
   endwhile
 endfunction
 
-" To open a new empty buffer
-nmap <Leader>t :enew<cr>
-
 " Close the current buffer and move to the previous one
 " This replicates the idea of closing a tab
 nmap <Leader>q :call BSkipQuickFix("bp") <BAR> bd #<CR>
@@ -205,10 +113,6 @@ nnoremap <Right> :vertical resize -2<CR>
 " Use . for each line of visual block
 vnoremap . :normal .<CR>
 
-" NERDTree shortcut
-map <C-k> :NERDTreeToggle<CR>
-map <C-a> :NERDTreeFind<CR>
-
 " Shortcuts for 3-way merge
 map <Leader>1 :diffget LOCAL<CR>
 map <Leader>2 :diffget BASE<CR>
@@ -220,22 +124,141 @@ map <Leader>3 :diffget REMOTE<CR>
 
 " Treesitter
 lua <<EOF
+-- Disable mouse
+vim.o.mouse = ""
+
+-- Don't highlight long lines
+vim.o.synmaxcol = 256
+
+-- Proper tabs (common languages/format)
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
+-- Visually indent wrapped lines, thus preserving horizontal blocks of text
+vim.o.breakindent = true
+
+-- Show the matching part of the pair for [] {} and ()
+vim.o.showmatch = true
+
+-- Set default split behaviour
+vim.o.splitbelow = true
+vim.o.splitright = true
+
+-- Show line numbers
+vim.o.number = true
+
+-- Enable relative line numbers
+vim.o.rnu = true
+
+-- Keep some lines within window when moving
+vim.o.scrolloff =  5
+
+-- Smarter case-sensitive search
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+-- Assume s/../../g
+vim.o.gdefault = true
+
+-- Visible 80-character mark
+vim.o.colorcolumn = '80'
+
+-- Show a visual line under the cursor's current line (slows down a LOT)
+vim.o.cursorline = false
+
+-- Blink cursor on error instead of beeping
+vim.o.visualbell = true
+
+-- Enable folding based on same indendation level
+vim.o.foldmethod = 'indent'
+-- Do not fold regions automatically
+vim.o.foldlevel = 99
+
+-- Use OS X clipboard
+vim.o.clipboard = 'unnamed'
+
+-- Highlight bad whitespace, folded regions and conceal
+vim.cmd [[highlight BadWhitespace ctermbg=red guibg=red]]
+vim.cmd [[highlight Folded ctermfg=darkgrey ctermbg=NONE]]
+vim.cmd [[highlight Conceal ctermfg=58 ctermbg=NONE]]
+
+-- Needed for vim-markdown.
+-- highlight htmlItalic cterm=italic
+-- highlight htmlBold cterm=bold
+
+-- Persist the undo tree for each file
+vim.o.undofile = true
+
+-- Better diff algorithm
+vim.o.diffopt = vim.o.diffopt .. ',algorithm:patience'
+
+require('telescope').setup()
+require('telescope').load_extension('fzf')
+
+require('gitsigns').setup()
+
 require('nvim-treesitter.configs').setup {
   highlight = {
     enable = true,
   },
+  indent = {
+    enable = true,
+  },
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true, -- whether to set jumps in the jumplist
+      goto_next_start = {
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
+      },
+      goto_next_end = {
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
+      },
+      goto_previous_start = {
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
+      },
+      goto_previous_end = {
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
+      },
+    },
+  },
 }
+
 require('nvim-tree').setup()
-local kanagawa = require('lualine.themes.kanagawa')
-for _, mode in pairs(kanagawa) do 
- mode.a.gui = nil
-end
+
+-- local kanagawa = require('lualine.themes.kanagawa')
+-- for _, mode in pairs(kanagawa) do 
+--  mode.a.gui = nil
+-- end
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = kanagawa,
-    component_separators = '|',
-    section_separators = '',
+    theme = 'jellybeans'
+    -- component_separators = '|',
+    -- section_separators = "" -- cannot use double single-quotes here
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+    lualine_x = {'lsp_progress', 'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
   },
   tabline = {
       lualine_a = {'buffers'},
@@ -243,44 +266,174 @@ require('lualine').setup {
       lualine_c = {},
       lualine_x = {},
       lualine_y = {},
-      lualine_z = {'tabs'}
+      lualine_z = {}
   }
 }
+
+mapping_opts = { noremap = true, silent = true } 
+
+-- Telescope global mappings
+vim.api.nvim_set_keymap('n', '<C-p>', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], mapping_opts)
+vim.api.nvim_set_keymap('n', '<C-s>g', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], mapping_opts)
+vim.api.nvim_set_keymap('n', '<Leader>p', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], mapping_opts)
+
+-- NvimTree mappings
+vim.api.nvim_set_keymap('n', '<C-k>', ':NvimTreeToggle<CR>', mapping_opts)
+vim.api.nvim_set_keymap('n', '<C-a>', ':NvimTreeFindFile<CR>', mapping_opts)
+
+local nvim_lsp = require 'lspconfig'
+
+local on_attach = function(client, bufnr)
+   -- Omnifunc mapping is <C-x><C-o>.
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Mappings.
+  local opts = { noremap = true, silent = true }
+  buf_set_keymap('n', 'gD', [[<cmd>lua vim.lsp.buf.declaration()<CR>]], opts)
+  buf_set_keymap('n', 'gd', [[<cmd>lua require('telescope.builtin').lsp_definitions()<CR>]], opts)
+  buf_set_keymap('n', 'gr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], opts)
+  buf_set_keymap('n', 'K', [[<cmd>lua vim.lsp.buf.hover()<CR>]], opts)
+  buf_set_keymap('n', 'gi', [[<cmd>lua vim.lsp.buf.implementation()<CR>]], opts)
+  buf_set_keymap('n', '<leader>D', [[<cmd>lua vim.lsp.buf.type_definition()<CR>]], opts)
+  buf_set_keymap('n', '<leader>rn', [[<cmd>lua vim.lsp.buf.rename()<CR>]], opts)
+  buf_set_keymap('n', '<leader>ca', [[<cmd>lua vim.lsp.buf.code_action()<CR>]], opts)
+  buf_set_keymap('n', '<leader>e', [[<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>]], opts)
+  buf_set_keymap('n', '<leader>t', [[<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>]], opts)
+  buf_set_keymap('n', '[d', [[<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>]], opts)
+  buf_set_keymap('n', ']d', [[<cmd>lua vim.lsp.diagnostic.goto_next()<CR>]], opts)
+  -- buf_set_keymap('n', '<leader>q', [[<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>]], opts)
+  buf_set_keymap('n', '<leader>Q', [[<cmd>lua vim.lsp.diagnostic.set_qflist()<CR>]], opts)
+  -- buf_set_keymap('n', '<C-s>', [[<cmd>lua vim.lsp.buf.signature_help()<CR>]], opts)
+
+  -- Set some keybinds conditional on server capabilities
+  if client.resolved_capabilities.document_formatting then
+    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  end
+  if client.resolved_capabilities.document_range_formatting then
+    buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+  end
+
+  -- Set autocommands conditional on server_capabilities
+  if client.resolved_capabilities.document_highlight then
+    vim.api.nvim_exec([[
+      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
+      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
+      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+      augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
+    ]], false)
+  end
+
+  require "lsp_signature".on_attach({
+     bind = true, -- This is mandatory, otherwise border config won't get registered.
+     handler_opts = {
+       border = "rounded"
+     }
+   }, bufnr)
+end
+
+local configs = require('lspconfig/configs')
+configs.hls = {
+ default_config = {
+   cmd = {'haskell-language-server-wrapper', '--lsp'};
+   filetypes = {'haskell', 'lhaskell'};
+   root_dir = nvim_lsp.util.root_pattern("stack.yaml", "hie-bios", "WORKSPACE", "BUILD.bazel", "cabal.config", "package.yaml", "hie.yaml");
+   settings = {};
+ };
+}
+
+-- Setup nvim-cmp for autocompletion.
+local cmp = require('cmp')
+local luasnip = require('luasnip')
+
+local function t(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+local check_back_space = function()
+    local col = vim.fn.col "." - 1
+    return col == 0 or vim.fn.getline("."):sub(col, col):match "%s" ~= nil
+end
+
+local function tab(fallback)
+    if cmp.visible() then
+        cmp.select_next_item()
+    elseif luasnip.expand_or_jumpable() then
+        vim.fn.feedkeys(t "<Plug>luasnip-expand-or-jump", "")
+    elseif check_back_space() then
+        vim.fn.feedkeys(t "<tab>", "n")
+    else
+        fallback()
+    end
+end
+
+local function shift_tab(fallback)
+    if cmp.visible() then
+        cmp.select_prev_item()
+    elseif luasnip.jumpable(-1) then
+        vim.fn.feedkeys(t "<Plug>luasnip-jump-prev", "")
+    else
+        fallback()
+    end
+end
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = {
+    ["<Tab>"] = cmp.mapping(tab, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(shift_tab, { "i", "s" }),
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }, {
+    { name = 'buffer' },
+    { name = 'path' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Load friendly snippets.
+luasnip.config.set_config {
+    history = true,
+}
+require("luasnip.loaders.from_vscode").load()
+
+-- Setup lspconfig.
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+nvim_lsp.hls.setup{
+    on_attach = on_attach;
+    capabilities = capabilities;
+}
+
+vim.cmd('colorscheme base16-tomorrow-night')
 EOF
 
 " Neomake
 call neomake#configure#automake('w')
 let g:neomake_open_list = 2
+let g:rainbow_active = 1
 
-" RainbowParen
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-let g:rbpt_colorpairs = [
-    \ ['brown',       'RoyalBlue3'],
-    \ ['Darkblue',    'SeaGreen3'],
-    \ ['darkgray',    'DarkOrchid3'],
-    \ ['darkgreen',   'firebrick3'],
-    \ ['darkcyan',    'RoyalBlue3'],
-    \ ['darkred',     'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown',       'firebrick3'],
-    \ ['gray',        'RoyalBlue3'],
-    \ ['white',       'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue',    'firebrick3'],
-    \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkcyan',    'SeaGreen3'],
-    \ ['darkred',     'DarkOrchid3'],
-    \ ['red',         'firebrick3'],
-    \ ]
-let g:rbpt_max = 16
-let g:rbpt_loadcmd_toggle = 0
-
-" Telescope
-nnoremap <silent> <C-p> <cmd>Telescope find_files<cr>
-nnoremap <silent> <C-s>g <cmd>Telescope live_grep<cr>
-nnoremap <silent> <C-s>b <cmd>Telescope buffers<cr>
-nnoremap <silent> <C-s>k <cmd>Telescope help_tags<cr>
 ''
 + (if withWriting then ''
 " Goyo
@@ -309,7 +462,6 @@ function! s:goyo_leave()
   set showcmd
   set scrolloff=5
   set scl=yes
-  SignifyEnable
   Limelight!
   " ...
 endfunction
