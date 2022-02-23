@@ -95,8 +95,7 @@ let
     cmp-path # Path completion
     cmp-buffer # Completion of stuff that's in buffer
 
-    # kanagawa-nvim
-    nvim-base16
+    kanagawa-nvim # Colorscheme
     lsp_signature-nvim
     symbols-outline-nvim
     friendly-snippets

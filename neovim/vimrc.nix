@@ -241,14 +241,16 @@ require('nvim-treesitter.configs').setup {
 
 require('nvim-tree').setup()
 
--- local kanagawa = require('lualine.themes.kanagawa')
--- for _, mode in pairs(kanagawa) do 
---  mode.a.gui = nil
--- end
+local kanagawa = require('lualine.themes.kanagawa')
+for _, mode in pairs(kanagawa) do 
+  mode.a.gui = nil
+end
+vim.cmd('colorscheme kanagawa')
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = 'jellybeans'
+    theme = kanagawa
     -- component_separators = '|',
     -- section_separators = "" -- cannot use double single-quotes here
   },
@@ -426,7 +428,6 @@ nvim_lsp.hls.setup{
     capabilities = capabilities;
 }
 
-vim.cmd('colorscheme base16-tomorrow-night')
 EOF
 
 " Neomake
