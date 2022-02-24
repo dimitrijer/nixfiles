@@ -1,4 +1,4 @@
-{ pkgs
+{ pkgs ? import <nixpkgs> {}
 , withClojure ? false
 , withHaskell ? false
 , withWriting ? false
