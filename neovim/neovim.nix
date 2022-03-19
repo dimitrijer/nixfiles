@@ -17,6 +17,7 @@ let
       rev = "9f2f76a8845249933ebbea70b3c0bed04e7153ac";
       sha256 = "1k1rd4gck7ifmn91dmj1zcxxkggjxzdn4r4s50g29bky3dp8zjim";
     };
+    meta.homepage = "https://github.com/flwyd/vim-conjoin";
   };
   vim-lambdify = pkgs.vimUtils.buildVimPluginFrom2Nix {
     name = "vim-lambdify";
@@ -26,6 +27,7 @@ let
       rev = "58686218f0b0410acdb39575e7273147b5d024de";
       sha256 = "1gkwghwbgcwj1f1lxp2gk3vg2zqqigdr1h6p7sl34nzwhklvwpd0";
     };
+    meta.homepage = "https://github.com/calebsmith/vim-lambdify";
   };
   vim-codefmt = pkgs.vimUtils.buildVimPlugin {
     name = "vim-codefmt";
@@ -35,17 +37,18 @@ let
       rev = "d71e62da8529dc80e76cfbcfb8ae5d3ff6f8bd6c";
       sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
     };
+    meta.homepage = "https://github.com/dimitrijer/vim-codefmt";
   };
-  kanagawa-nvim = buildVimPluginFrom2Nix {
-    pname = "kanagawa.nvim";
+  kanagawa-nvim = pkgs.vimUtils.buildVimPluginFrom2Nix {
+    name = "kanagawa.nvim";
     version = "2022-03-02";
-    src = fetchFromGitHub {
+    src = pkgs.fetchFromGitHub {
       owner = "rebelot";
       repo = "kanagawa.nvim";
       rev = "63cb5cc1a80def7da4bb375adee1587866250a17";
-      sha256 = "0kk7yfp6x3p0yjg4l1vpb3h0z268nvx6d3gw6j1dpcqshkqx7lgy";
+      sha256 = "08iwz314c0k63mwv3yka8n79lb2627nbx9n81l9crz1f3nplaasd";
     };
-    meta.homepage = "https://github.com/rebelot/kanagawa.nvim/";
+    meta.homepage = "https://github.com/rebelot/kanagawa.nvim";
   };
   vimPluginsLua = with pkgs.vimPlugins; [
     plenary-nvim
