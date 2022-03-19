@@ -345,7 +345,7 @@ configs.hls = {
  default_config = {
    cmd = {'haskell-language-server-wrapper', '--lsp'};
    filetypes = {'haskell', 'lhaskell'};
-   root_dir = nvim_lsp.util.root_pattern("stack.yaml", "hie-bios", "WORKSPACE", "BUILD.bazel", "cabal.config", "package.yaml", "hie.yaml", "hie.yml");
+   root_dir = nvim_lsp.util.root_pattern("stack.yaml", ".hie-bios", "WORKSPACE", "cabal.config", "package.yaml", "hie.yaml", "hie.yml");
    settings = {};
  };
 }
