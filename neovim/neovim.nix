@@ -36,6 +36,17 @@ let
       sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
     };
   };
+  kanagawa-nvim = buildVimPluginFrom2Nix {
+    pname = "kanagawa.nvim";
+    version = "2022-03-02";
+    src = fetchFromGitHub {
+      owner = "rebelot";
+      repo = "kanagawa.nvim";
+      rev = "63cb5cc1a80def7da4bb375adee1587866250a17";
+      sha256 = "0kk7yfp6x3p0yjg4l1vpb3h0z268nvx6d3gw6j1dpcqshkqx7lgy";
+    };
+    meta.homepage = "https://github.com/rebelot/kanagawa.nvim/";
+  };
   vimPluginsLua = with pkgs.vimPlugins; [
     plenary-nvim
     (nvim-treesitter.withPlugins (
