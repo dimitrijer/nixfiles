@@ -192,6 +192,9 @@ vim.o.undofile = true
 -- Better diff algorithm
 vim.o.diffopt = vim.o.diffopt .. ',algorithm:patience'
 
+-- Use 24-bit colors.
+vim.o.termguicolors = true
+
 require('telescope').setup()
 require('telescope').load_extension('fzf')
 
@@ -241,16 +244,12 @@ require('nvim-treesitter.configs').setup {
 
 require('nvim-tree').setup()
 
-local kanagawa = require('lualine.themes.kanagawa')
-for _, mode in pairs(kanagawa) do 
-  mode.a.gui = nil
-end
-vim.cmd('colorscheme kanagawa')
+vim.cmd('colorscheme sonokai')
 
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = kanagawa
+    theme = sonokai
     -- component_separators = '|',
     -- section_separators = "" -- cannot use double single-quotes here
   },

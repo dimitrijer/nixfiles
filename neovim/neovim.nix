@@ -57,12 +57,10 @@ let
         tree-sitter-c
         tree-sitter-cpp
         tree-sitter-make
-        #tree-sitter-cmake
         tree-sitter-html
         tree-sitter-css
         tree-sitter-javascript
         tree-sitter-typescript
-        #tree-sitter-elm
         tree-sitter-vim
         tree-sitter-java
         tree-sitter-go
@@ -99,6 +97,7 @@ let
     vim-maktaba # Google plugin library
 
     luasnip # Snippet engine
+    friendly-snippets # A collection of snippets for various languages
 
     nvim-lspconfig # Native LSP support
     nvim-cmp # Completion engine
@@ -109,10 +108,9 @@ let
     cmp-path # Path completion
     cmp-buffer # Completion of stuff that's in buffer
 
-    kanagawa-nvim # Colorscheme
-    lsp_signature-nvim
-    symbols-outline-nvim
-    friendly-snippets
+    sonokai # Colorscheme
+    lsp_signature-nvim # As you type fn arguments get type hints
+    symbols-outline-nvim # LSP-powered outline bar
   ];
 in
 pkgs.neovim.override {
