@@ -111,6 +111,7 @@ let
     sonokai # Colorscheme
     lsp_signature-nvim # As you type fn arguments get type hints
     symbols-outline-nvim # LSP-powered outline bar
+    trouble-nvim # LSP diagnostics
   ];
 in
 pkgs.neovim.override {
