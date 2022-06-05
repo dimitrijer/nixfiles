@@ -2,5 +2,5 @@
 
 { 
   neovim = import ./neovim/neovim.nix; 
-  powerline-gitstatus = (import ./powerline-gitstatus.nix);
+  python3 = import ./python3.nix;
 }
