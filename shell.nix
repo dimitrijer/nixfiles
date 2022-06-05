@@ -9,10 +9,15 @@ let
     pkgs = pkgs;
     withHaskell = true;
   };
+  powerline-gitstatus = nixfiles.powerline-gitstatus { pkgs = pkgs; };
 in
 pkgs.mkShell {
   buildInputs = with pkgs; [
     # For vim-codefmt.
+    nixpkgs-fmt
     ormolu
-  ] ++ [ neovim ];
+  ] ++ [ 
+    neovim 
+    powerline-gitstatus
+  ];
 }
