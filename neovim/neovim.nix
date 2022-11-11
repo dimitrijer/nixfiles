@@ -73,6 +73,7 @@ let
         tree-sitter-python
         # TS Haskell syntax is too colorful for me at the moment. vim-haskell it is.
         # tree-sitter-haskell
+        tree-sitter-ocaml
         tree-sitter-clojure
       ]
     ))
