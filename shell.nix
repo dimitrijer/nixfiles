@@ -9,7 +9,7 @@ let
     pkgs = pkgs;
     withHaskell = true;
   };
-  powerline-gitstatus = nixfiles.powerline-gitstatus { pkgs = pkgs; };
+  python3 = nixfiles.python3 { pkgs = pkgs; };
 in
 pkgs.mkShell {
   buildInputs = with pkgs; [
@@ -18,6 +18,6 @@ pkgs.mkShell {
     ormolu
   ] ++ [ 
     neovim 
-    powerline-gitstatus
+    python3
   ];
 }
