@@ -1,8 +1,8 @@
 let
   sources = import ./nix/sources.nix;
-  pkgs = import sources.nixpkgs { 
-    overlays = [];
-    config = {};
+  pkgs = import sources.nixpkgs {
+    overlays = [ ];
+    config = { };
   };
   nixfiles = import ./default.nix { };
   neovim = nixfiles.neovim {
@@ -16,8 +16,9 @@ pkgs.mkShell {
     # For vim-codefmt.
     nixpkgs-fmt
     ormolu
-  ] ++ [ 
-    neovim 
+    ocamlformat
+  ] ++ [
+    neovim
     python3
   ];
 }
