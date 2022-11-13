@@ -52,6 +52,7 @@ augroup autoformat_settings
   autocmd FileType python AutoFormatBuffer black
   autocmd FileType nix AutoFormatBuffer nixpkgs-fmt
   autocmd FileType haskell AutoFormatBuffer ormolu
+  autocmd FileType ocaml AutoFormatBuffer ocamlformat
 augroup END
 
 """
