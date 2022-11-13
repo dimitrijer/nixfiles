@@ -34,8 +34,8 @@ let
     src = pkgs.fetchFromGitHub {
       owner = "dimitrijer";
       repo = "vim-codefmt";
-      rev = "d71e62da8529dc80e76cfbcfb8ae5d3ff6f8bd6c";
-      sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
+      rev = "6067b75fe67dea2c44b81a3cd44b7e87da23c459";
+      sha256 = "sha256-FW4WacG6Ns9qPbqeheHuFHOL5XFMd2QuvU2cxIu8Xjw=";
     };
     meta.homepage = "https://github.com/dimitrijer/vim-codefmt";
   };
