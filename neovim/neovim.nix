@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}
+{ pkgs ? import <nixpkgs> { }
 , withClojure ? false
 , withHaskell ? false
 , withWriting ? false
@@ -38,6 +38,16 @@ let
       sha256 = "1dmfkj0cmyxx3q7rrsxlhgiax2w5q82bxvavs0j0j8zhsa6m7a0j";
     };
     meta.homepage = "https://github.com/dimitrijer/vim-codefmt";
+  };
+  vim-glaive = pkgs.vimUtils.buildVimPlugin {
+    name = "vim-glaive";
+    src = pkgs.fetchFromGitHub {
+      owner = "google";
+      repo = "vim-glaive";
+      rev = "3c5db8d279f86355914200119e8727a085863fcd";
+      hash = "sha256-uNDz2MZrzzRXfVbS5yUGoJwa6DMV63yZXO31fMUrDe8=";
+    };
+    meta.homepage = "https://github.com/google/vim-glaive";
   };
   kanagawa-nvim = pkgs.vimUtils.buildVimPluginFrom2Nix {
     name = "kanagawa.nvim";
@@ -96,6 +106,7 @@ let
     vim-conjoin # Smart line join (J)
     vim-lambdify # -> <bling> defn -> lambda symbol. </bling>
     vim-maktaba # Google plugin library
+    vim-glaive # Google Maktaba plugin config
 
     luasnip # Snippet engine
     friendly-snippets # A collection of snippets for various languages
