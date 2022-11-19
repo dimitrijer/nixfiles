@@ -1,6 +1,7 @@
 { pkgs ? import <nixpkgs> { }
 , withClojure ? false
 , withHaskell ? false
+, withOCaml ? false
 , withWriting ? false
 , withZettel ? false
 , preVimRC ? ""
@@ -8,7 +9,11 @@
 }:
 
 let
-  vimRC = preVimRC + import ./vimrc.nix { withWriting = withWriting; } + postVimRC;
+  vimRC = preVimRC + import ./vimrc.nix {
+    withWriting = withWriting;
+    withHaskell = withHaskell;
+    withOCaml = withOCaml;
+  } + postVimRC;
   vim-conjoin = pkgs.vimUtils.buildVimPlugin {
     name = "vim-conjoin";
     src = pkgs.fetchFromGitHub {

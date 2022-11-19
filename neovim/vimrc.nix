@@ -1,4 +1,7 @@
-{ withWriting ? false }:
+{ withWriting ? false
+, withHaskell ? false
+, withOCaml ? false
+}:
 
 ''
   " Running in nix, so ignore ~/.vim
@@ -123,7 +126,57 @@
   """ Vim plugins config starts here
   """
 
-  " Treesitter
+  " Rainbow Parentheses Improved
+  let g:rainbow_active = 1
+
+  " Neomake
+  call neomake#configure#automake('w')
+  let g:neomake_open_list = 2
+''
++ (if withWriting then ''
+  " Goyo
+  let g:goyo_width = 100
+
+  " Auto-enable Limelight in Goyo
+  function! s:goyo_enter()
+    if executable('tmux') && strlen($TMUX)
+      silent !tmux set status off
+      silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+    endif
+    set noshowmode
+    set noshowcmd
+    set scrolloff=999
+    set scl=no
+    Limelight
+    " ...
+  endfunction
+
+  function! s:goyo_leave()
+    if executable('tmux') && strlen($TMUX)
+      silent !tmux set status on
+      silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+    endif
+    set showmode
+    set showcmd
+    set scrolloff=5
+    set scl=yes
+    Limelight!
+    " ...
+  endfunction
+
+  autocmd! User GoyoEnter nested call <SID>goyo_enter()
+  autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+  " Markdown
+  let g:vim_markdown_new_list_item_indent = 2
+  let g:vim_markdown_frontmatter = 1
+
+'' else "")
++ ''
+  """
+  """ Lua config starts here
+  """
+
   lua <<EOF
   -- Disable mouse
   vim.o.mouse = ""
@@ -340,16 +393,6 @@
      }, bufnr)
   end
 
-  local configs = require('lspconfig/configs')
-  configs.hls = {
-   default_config = {
-     cmd = {'haskell-language-server-wrapper', '--lsp'};
-     filetypes = {'haskell', 'lhaskell'};
-     root_dir = nvim_lsp.util.root_pattern("stack.yaml", ".hie-bios", "WORKSPACE", "cabal.config", "package.yaml", "hie.yaml", "hie.yml");
-     settings = {};
-   };
-  }
-
   -- Setup nvim-cmp for autocompletion.
   local cmp = require('cmp')
   local luasnip = require('luasnip')
@@ -422,60 +465,34 @@
   require("luasnip.loaders.from_vscode").load()
 
   -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+  if vim.fn.has('nvim-0.8') == 1
+  then
+      local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+  else
+      local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  end
+  local configs = require('lspconfig/configs')
+''
++ (if withHaskell then ''
+  configs.hls = {
+   default_config = {
+     cmd = {'haskell-language-server-wrapper', '--lsp'};
+     filetypes = {'haskell', 'lhaskell'};
+     root_dir = nvim_lsp.util.root_pattern("stack.yaml", ".hie-bios", "WORKSPACE", "cabal.config", "package.yaml", "hie.yaml", "hie.yml");
+     settings = {};
+   };
+  }
   nvim_lsp.hls.setup{
       on_attach = on_attach;
       capabilities = capabilities;
   }
+'' else "")
++ (if withOCaml then ''
   nvim_lsp.ocamllsp.setup{
       on_attach = on_attach;
       capabilities = capabilities;
   }
-
-  EOF
-
-  " Neomake
-  call neomake#configure#automake('w')
-  let g:neomake_open_list = 2
-  let g:rainbow_active = 1
-
-''
-  + (if withWriting then ''
-  " Goyo
-  let g:goyo_width = 100
-
-  " Auto-enable Limelight in Goyo
-  function! s:goyo_enter()
-    if executable('tmux') && strlen($TMUX)
-      silent !tmux set status off
-      silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-    endif
-    set noshowmode
-    set noshowcmd
-    set scrolloff=999
-    set scl=no
-    Limelight
-    " ...
-  endfunction
-
-  function! s:goyo_leave()
-    if executable('tmux') && strlen($TMUX)
-      silent !tmux set status on
-      silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-    endif
-    set showmode
-    set showcmd
-    set scrolloff=5
-    set scl=yes
-    Limelight!
-    " ...
-  endfunction
-
-  autocmd! User GoyoEnter nested call <SID>goyo_enter()
-  autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-  " Markdown
-  let g:vim_markdown_new_list_item_indent = 2
-  let g:vim_markdown_frontmatter = 1
-
 '' else "")
+  + ''
+  EOF
+''
