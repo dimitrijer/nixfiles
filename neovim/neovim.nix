@@ -114,10 +114,7 @@ let
     nvim-lspconfig # Native LSP support
     nvim-cmp # Completion engine
     cmp-nvim-lsp # LSP completion
-    cmp-nvim-lua # Have no idea what this is
-    cmp-nvim-lsp-document-symbol # Type /@
     cmp_luasnip # Snippet completion
-    cmp-path # Path completion
     cmp-buffer # Completion of stuff that's in buffer
 
     sonokai # Colorscheme
