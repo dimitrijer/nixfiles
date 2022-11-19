@@ -32,12 +32,12 @@ let
   vim-codefmt = pkgs.vimUtils.buildVimPlugin {
     name = "vim-codefmt";
     src = pkgs.fetchFromGitHub {
-      owner = "dimitrijer";
+      owner = "google";
       repo = "vim-codefmt";
-      rev = "7db0ba74a3eaf1b02dd4757fa268666201dc0798";
-      hash = "sha256-kGQwhTBGC7bRTEY1k+lZiGMRiqGdsyRV7ywHr2NW0Io=";
+      rev = "3494825e8f3e78869d2da4551fb00814f8e3f285";
+      hash = "sha256-th4s1f8Yet5XUVzMD3K34xrfaNbQdR5YooCd23h3rRI=";
     };
-    meta.homepage = "https://github.com/dimitrijer/vim-codefmt";
+    meta.homepage = "https://github.com/google/vim-codefmt";
   };
   vim-glaive = pkgs.vimUtils.buildVimPlugin {
     name = "vim-glaive";
