@@ -236,6 +236,12 @@
   vim.cmd [[highlight Folded ctermfg=darkgrey ctermbg=NONE]]
   vim.cmd [[highlight Conceal ctermfg=58 ctermbg=NONE]]
 
+  -- Sign icons
+  vim.cmd [[sign define DiagnosticSignError text= texthl=LspDiagnosticsSignError]]
+  vim.cmd [[sign define DiagnosticSignWarn text= texthl=LspDiagnosticsSignWarning]]
+  vim.cmd [[sign define DiagnosticSignHint text= texthl=LspDiagnosticsSignHint]]
+  vim.cmd [[sign define DiagnosticSignInfo text= texthl=LspDiagnosticsSignInformation]]
+
   -- Needed for vim-markdown.
   -- highlight htmlItalic cterm=italic
   -- highlight htmlBold cterm=bold
