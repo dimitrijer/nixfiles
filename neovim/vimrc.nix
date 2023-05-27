@@ -479,6 +479,10 @@
       local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   end
   local configs = require('lspconfig/configs')
+
+  -- Setup trouble.
+  vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({skip_groups = true, jump = true})<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', '<leader>xx', [[<cmd>TroubleToggle<CR>]], mapping_opts)
 ''
 + (if withHaskell then ''
   configs.hls = {
