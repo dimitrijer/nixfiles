@@ -360,7 +360,7 @@
     buf_set_keymap('n', 'gi', [[<cmd>lua vim.lsp.buf.implementation()<CR>]], opts)
     buf_set_keymap('n', '<leader>D', [[<cmd>lua vim.lsp.buf.type_definition()<CR>]], opts)
     buf_set_keymap('n', '<leader>rn', [[<cmd>lua vim.lsp.buf.rename()<CR>]], opts)
-    buf_set_keymap('n', '<leader>ca', [[<cmd>lua vim.lsp.buf.code_action()<CR>]], opts)
+    buf_set_keymap('n', '<leader>ca', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<CR>]], opts)
     buf_set_keymap('n', '<leader>e', [[<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>]], opts)
     buf_set_keymap('n', '<leader>t', [[<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>]], opts)
     buf_set_keymap('n', '[d', [[<cmd>lua vim.diagnostic.goto_prev()<CR>]], opts)
