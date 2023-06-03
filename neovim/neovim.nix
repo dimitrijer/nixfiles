@@ -97,6 +97,7 @@ let
     nvim-web-devicons # Pretty ft icons
     telescope-nvim # Multifunctional searcher
     telescope-fzf-native-nvim # Pure C fzf sorter for telescope
+    telescope-ui-select-nvim # Telescope-powered vim.ui.select
     lualine-nvim # Status line
     lualine-lsp-progress # Show LSP init progress in status line
     neomake # Syntax checker
