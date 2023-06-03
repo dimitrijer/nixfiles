@@ -39,8 +39,8 @@ let
     src = pkgs.fetchFromGitHub {
       owner = "google";
       repo = "vim-codefmt";
-      rev = "3494825e8f3e78869d2da4551fb00814f8e3f285";
-      hash = "sha256-th4s1f8Yet5XUVzMD3K34xrfaNbQdR5YooCd23h3rRI=";
+      rev = "6ee1e7e22a6ff793331da96c0884f0b906e7dc96";
+      sha256 = "116r2hrbf87silgzp5py7chp8wcb64rhxcg5vhscq2gp7080yv7h";
     };
     meta.homepage = "https://github.com/google/vim-codefmt";
   };
@@ -60,8 +60,8 @@ let
     src = pkgs.fetchFromGitHub {
       owner = "rebelot";
       repo = "kanagawa.nvim";
-      rev = "63cb5cc1a80def7da4bb375adee1587866250a17";
-      sha256 = "08iwz314c0k63mwv3yka8n79lb2627nbx9n81l9crz1f3nplaasd";
+      rev = "14a7524a8b259296713d4d77ef3c7f4dec501269";
+      sha256 = "1d9r29352bi9a4rzhxji1j3vj89swydsayszs621f0917zwpml87";
     };
     meta.homepage = "https://github.com/rebelot/kanagawa.nvim";
   };
