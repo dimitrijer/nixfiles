@@ -237,8 +237,8 @@
   vim.cmd [[highlight Conceal ctermfg=58 ctermbg=NONE]]
 
   -- Sign icons
-  vim.cmd [[sign define DiagnosticSignError text= texthl=LspDiagnosticsSignError]]
-  vim.cmd [[sign define DiagnosticSignWarn text= texthl=LspDiagnosticsSignWarning]]
+  vim.cmd [[sign define DiagnosticSignError text= texthl=LspDiagnosticsSignError]]
+  vim.cmd [[sign define DiagnosticSignWarn text= texthl=LspDiagnosticsSignWarning]]
   vim.cmd [[sign define DiagnosticSignHint text= texthl=LspDiagnosticsSignHint]]
   vim.cmd [[sign define DiagnosticSignInfo text= texthl=LspDiagnosticsSignInformation]]
 
