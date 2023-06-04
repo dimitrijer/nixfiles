@@ -111,6 +111,7 @@ let
     vim-highlightedyank # Highlight yanked regions
     vim-conjoin # Smart line join (J)
     vim-lambdify # -> <bling> defn -> lambda symbol. </bling>
+    quick-scope # Highlight next/previous chars in current line
     vim-maktaba # Google plugin library
     vim-glaive # Google Maktaba plugin config
 
