@@ -335,9 +335,10 @@
   mapping_opts = { noremap = true, silent = true } 
 
   -- Telescope global mappings
-  vim.api.nvim_set_keymap('n', '<C-p>', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], mapping_opts)
-  vim.api.nvim_set_keymap('n', '<C-s>g', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], mapping_opts)
-  vim.api.nvim_set_keymap('n', '<Leader>p', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', 'go', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', 'gp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', 'gb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', 'gh', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], mapping_opts)
 
   -- NvimTree mappings
   vim.api.nvim_set_keymap('n', '<C-k>', ':NvimTreeToggle<CR>', mapping_opts)
@@ -354,16 +355,16 @@
 
     -- Mappings.
     local opts = { noremap = true, silent = true }
-    buf_set_keymap('n', 'gD', [[<cmd>lua vim.lsp.buf.declaration()<CR>]], opts)
-    buf_set_keymap('n', 'gd', [[<cmd>lua require('telescope.builtin').lsp_definitions()<CR>]], opts)
-    buf_set_keymap('n', 'gr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], opts)
     buf_set_keymap('n', 'K', [[<cmd>lua vim.lsp.buf.hover()<CR>]], opts)
-    buf_set_keymap('n', 'gi', [[<cmd>lua vim.lsp.buf.implementation()<CR>]], opts)
+    buf_set_keymap('n', 'gd', [[<cmd>lua vim.lsp.buf.declaration()<CR>]], opts)
+    buf_set_keymap('n', 'gD', [[<cmd>lua require('telescope.builtin').lsp_definitions()<CR>]], opts)
+    buf_set_keymap('n', 'gr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], opts)
+    buf_set_keymap('n', 'gi', [[<cmd>lua require('telescope.builtin').lsp_implementations()<CR>]], opts)
+    buf_set_keymap('n', 'gt', [[<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>]], opts)
     buf_set_keymap('n', '<leader>D', [[<cmd>lua vim.lsp.buf.type_definition()<CR>]], opts)
     buf_set_keymap('n', '<leader>rn', [[<cmd>lua vim.lsp.buf.rename()<CR>]], opts)
     buf_set_keymap('n', '<leader>ca', [[<cmd>lua vim.lsp.buf.code_action()<CR>]], opts)
     buf_set_keymap('n', '<leader>e', [[<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>]], opts)
-    buf_set_keymap('n', '<leader>t', [[<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>]], opts)
     buf_set_keymap('n', '[d', [[<cmd>lua vim.diagnostic.goto_prev()<CR>]], opts)
     buf_set_keymap('n', ']d', [[<cmd>lua vim.diagnostic.goto_next()<CR>]], opts)
     -- buf_set_keymap('n', '<leader>q', [[<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>]], opts)
