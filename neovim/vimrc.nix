@@ -71,7 +71,7 @@
   " Sane movement through wrapping lines
   noremap j gj
   noremap k gk
-  " Prevent x from overriding what's in the clipboard.
+  " Prevent x from overriding what's in the default register.
   " (_ is the black-hole register, vim's equivalent of /dev/null)
   noremap x "_x
   noremap X "_x
@@ -79,9 +79,21 @@
   " Cycle splits
   nnoremap <S-Tab> <C-w>w
 
-  " Don't go to Ex mode, or edit command-line history
+  " Consistent behaviour for uppercase mappings
+  nnoremap Y y$
+  noremap H ^
+  noremap L $
+
+  " Don't go to Ex mode, or edit command-line history, or use backspace
   map q: <Nop>
   map Q <Nop>
+  noremap <BS> <Nop>
+
+  " Copy to system clibpoard.
+  nnoremap <Space>c "+yy
+  vnoremap <Space>c "+y
+  nnoremap <Space>v "+p
+  vnoremap <Space>v "+p
 
   " Skip quickfix buffer when moving through buffers.
   function! BSkipQuickFix(command)
@@ -221,9 +233,6 @@
   vim.o.foldmethod = 'indent'
   -- Do not fold regions automatically
   vim.o.foldlevel = 99
-
-  -- Use OS X clipboard
-  vim.o.clipboard = 'unnamed'
 
   -- Highlight bad whitespace, folded regions and conceal
   vim.cmd [[highlight BadWhitespace ctermbg=red guibg=red]]
