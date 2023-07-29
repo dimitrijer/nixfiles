@@ -34,37 +34,6 @@ let
     };
     meta.homepage = "https://github.com/calebsmith/vim-lambdify";
   };
-  vim-codefmt = pkgs.vimUtils.buildVimPlugin {
-    name = "vim-codefmt";
-    src = pkgs.fetchFromGitHub {
-      owner = "google";
-      repo = "vim-codefmt";
-      rev = "6ee1e7e22a6ff793331da96c0884f0b906e7dc96";
-      sha256 = "116r2hrbf87silgzp5py7chp8wcb64rhxcg5vhscq2gp7080yv7h";
-    };
-    meta.homepage = "https://github.com/google/vim-codefmt";
-  };
-  vim-glaive = pkgs.vimUtils.buildVimPlugin {
-    name = "vim-glaive";
-    src = pkgs.fetchFromGitHub {
-      owner = "google";
-      repo = "vim-glaive";
-      rev = "3c5db8d279f86355914200119e8727a085863fcd";
-      hash = "sha256-uNDz2MZrzzRXfVbS5yUGoJwa6DMV63yZXO31fMUrDe8=";
-    };
-    meta.homepage = "https://github.com/google/vim-glaive";
-  };
-  kanagawa-nvim = pkgs.vimUtils.buildVimPluginFrom2Nix {
-    name = "kanagawa.nvim";
-    version = "2022-03-02";
-    src = pkgs.fetchFromGitHub {
-      owner = "rebelot";
-      repo = "kanagawa.nvim";
-      rev = "14a7524a8b259296713d4d77ef3c7f4dec501269";
-      sha256 = "1d9r29352bi9a4rzhxji1j3vj89swydsayszs621f0917zwpml87";
-    };
-    meta.homepage = "https://github.com/rebelot/kanagawa.nvim";
-  };
   vimPluginsLua = with pkgs.vimPlugins; [
     plenary-nvim
     (nvim-treesitter.withPlugins (
@@ -112,8 +81,7 @@ let
     vim-conjoin # Smart line join (J)
     vim-lambdify # -> <bling> defn -> lambda symbol. </bling>
     quick-scope # Highlight next/previous chars in current line
-    vim-maktaba # Google plugin library
-    vim-glaive # Google Maktaba plugin config
+    vim-codefmt # Google code formatter
 
     luasnip # Snippet engine
     friendly-snippets # A collection of snippets for various languages
@@ -124,7 +92,7 @@ let
     cmp_luasnip # Snippet completion
     cmp-buffer # Completion of stuff that's in buffer
 
-    sonokai # Colorscheme
+    material-nvim # Colorscheme
     lsp_signature-nvim # As you type fn arguments get type hints
     symbols-outline-nvim # LSP-powered outline bar
     trouble-nvim # LSP diagnostics

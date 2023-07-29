@@ -42,9 +42,6 @@
   " Make sure all types of requirements.txt files get syntax highlighting.
   au BufNewFile,BufRead requirements*.txt set syntax=python
 
-  " Unset paste on InsertLeave.
-  au InsertLeave * silent! set nopaste
-
   " Set common autoformatters.
   augroup autoformat_settings
     autocmd FileType bzl AutoFormatBuffer buildifier
@@ -81,9 +78,6 @@
 
   " Cycle splits
   nnoremap <S-Tab> <C-w>w
-
-  " Toggle paste mode
-  set pastetoggle=<F9>
 
   " Don't go to Ex mode, or edit command-line history
   map q: <Nop>
@@ -237,14 +231,17 @@
   vim.cmd [[highlight Conceal ctermfg=58 ctermbg=NONE]]
 
   -- Sign icons
-  vim.cmd [[sign define DiagnosticSignError text= texthl=LspDiagnosticsSignError]]
-  vim.cmd [[sign define DiagnosticSignWarn text= texthl=LspDiagnosticsSignWarning]]
-  vim.cmd [[sign define DiagnosticSignHint text= texthl=LspDiagnosticsSignHint]]
-  vim.cmd [[sign define DiagnosticSignInfo text= texthl=LspDiagnosticsSignInformation]]
-
-  -- Needed for vim-markdown.
-  -- highlight htmlItalic cterm=italic
-  -- highlight htmlBold cterm=bold
+  local signs = {
+      Error = "",
+      Warn = "",
+      Hint = "",
+      Info = "",
+      Other = ""
+  }
+  for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+  end
 
   -- Persist the undo tree for each file
   vim.o.undofile = true
@@ -258,6 +255,12 @@
   require('telescope').setup()
   require('telescope').load_extension('fzf')
   require('telescope').load_extension('ui-select')
+
+  require('trouble').setup({
+    auto_open = true,
+    auto_close = true,
+    use_diagnostic_signs = true
+  })
 
   require('gitsigns').setup()
 
@@ -284,7 +287,7 @@
         enable = true,
         set_jumps = true, -- whether to set jumps in the jumplist
         goto_next_start = {
-          [']m'] = '@function.outer',
+         [']m'] = '@function.outer',
           [']]'] = '@class.outer',
         },
         goto_next_end = {
@@ -304,13 +307,10 @@
   }
 
   require('nvim-tree').setup()
-
-  vim.cmd('colorscheme sonokai')
-
+ 
   require('lualine').setup {
     options = {
       icons_enabled = true,
-      theme = sonokai
       -- component_separators = '|',
       -- section_separators = "" -- cannot use double single-quotes here
     },
@@ -345,6 +345,9 @@
   vim.api.nvim_set_keymap('n', '<C-a>', ':NvimTreeFindFile<CR>', mapping_opts)
 
   local nvim_lsp = require 'lspconfig'
+
+  -- Disable inline diagnostics.
+  vim.diagnostic.config({virtual_text = false})
 
   local on_attach = function(client, bufnr)
      -- Omnifunc mapping is <C-x><C-o>.
@@ -453,7 +456,6 @@
     },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'luasnip' },
     }, {
       { name = 'buffer' },
       { name = 'path' },
@@ -482,9 +484,10 @@
   end
   local configs = require('lspconfig/configs')
 
-  -- Setup trouble.
   vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({skip_groups = true, jump = true})<CR>]], mapping_opts)
   vim.api.nvim_set_keymap('n', '<leader>xx', [[<cmd>TroubleToggle<CR>]], mapping_opts)
+
+  vim.cmd('colorscheme material')
 ''
 + (if withHaskell then ''
   configs.hls = {
