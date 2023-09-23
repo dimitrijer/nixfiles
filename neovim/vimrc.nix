@@ -417,13 +417,13 @@
       ]], false)
     end
 
-    require "lsp_signature".on_attach({
-       bind = true, -- This is mandatory, otherwise border config won't get registered.
-       zindex = 50, -- Send to bottom of z-stack of floating windows.
-       handler_opts = {
-         border = "rounded"
-       }
-     }, bufnr)
+    --require "lsp_signature".on_attach({
+    --   bind = true, -- This is mandatory, otherwise border config won't get registered.
+    --   zindex = 50, -- Send to bottom of z-stack of floating windows.
+    --   handler_opts = {
+    --     border = "rounded"
+    --   }
+    --}, bufnr)
   end
 
   -- Setup nvim-cmp for autocompletion.

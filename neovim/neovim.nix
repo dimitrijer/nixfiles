@@ -93,7 +93,7 @@ let
     cmp-buffer # Completion of stuff that's in buffer
 
     material-nvim # Colorscheme
-    lsp_signature-nvim # As you type fn arguments get type hints
+    #lsp_signature-nvim # As you type fn arguments get type hints (too noisy)
     symbols-outline-nvim # LSP-powered outline bar
     trouble-nvim # LSP diagnostics
   ];
