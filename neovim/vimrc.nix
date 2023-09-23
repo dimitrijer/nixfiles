@@ -379,7 +379,7 @@
 
     -- Mappings.
     local opts = { noremap = true, silent = true }
-    buf_set_keymap('n', 'K', [[<cmd>lua vim.lsp.buf.hover()<CR>]], opts)
+    buf_set_keymap('n', '[]', [[<cmd>lua vim.lsp.buf.hover()<CR>]], opts)
     buf_set_keymap('n', 'gd', [[<cmd>lua vim.lsp.buf.declaration()<CR>]], opts)
     buf_set_keymap('n', 'gD', [[<cmd>lua require('telescope.builtin').lsp_definitions()<CR>]], opts)
     buf_set_keymap('n', 'gr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], opts)
