@@ -266,8 +266,8 @@
   require('telescope').load_extension('ui-select')
 
   require('trouble').setup({
-    auto_open = true,
-    auto_close = true,
+    auto_open = false,
+    auto_close = false,
     use_diagnostic_signs = true
   })
 
@@ -356,7 +356,19 @@
   local nvim_lsp = require 'lspconfig'
 
   -- Disable inline diagnostics.
-  vim.diagnostic.config({virtual_text = false})
+  vim.diagnostic.config({virtual_text = true, update_on_insert = false})
+  vim.api.nvim_create_autocmd("InsertEnter", {
+    pattern = "*",
+    callback = function()
+      vim.diagnostic.disable()
+    end
+  })
+  vim.api.nvim_create_autocmd("InsertLeave", {
+    pattern = "*",
+    callback = function()
+      vim.diagnostic.enable()
+    end
+  })
 
   local on_attach = function(client, bufnr)
      -- Omnifunc mapping is <C-x><C-o>.
