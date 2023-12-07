@@ -24,7 +24,7 @@ let
     };
     meta.homepage = "https://github.com/flwyd/vim-conjoin";
   };
-  vim-lambdify = pkgs.vimUtils.buildVimPluginFrom2Nix {
+  vim-lambdify = pkgs.vimUtils.buildVimPlugin {
     name = "vim-lambdify";
     src = pkgs.fetchFromGitHub {
       owner = "calebsmith";
