@@ -129,57 +129,6 @@
   map <Leader>3 :diffget REMOTE<CR>
 
   """
-  """ Vim plugins config starts here
-  """
-
-  " Rainbow Parentheses Improved
-  let g:rainbow_active = 1
-
-  " Neomake
-  call neomake#configure#automake('w')
-  let g:neomake_open_list = 2
-''
-+ (if withWriting then ''
-  " Goyo
-  let g:goyo_width = 100
-
-  " Auto-enable Limelight in Goyo
-  function! s:goyo_enter()
-    if executable('tmux') && strlen($TMUX)
-      silent !tmux set status off
-      silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-    endif
-    set noshowmode
-    set noshowcmd
-    set scrolloff=999
-    set scl=no
-    Limelight
-    " ...
-  endfunction
-
-  function! s:goyo_leave()
-    if executable('tmux') && strlen($TMUX)
-      silent !tmux set status on
-      silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-    endif
-    set showmode
-    set showcmd
-    set scrolloff=5
-    set scl=yes
-    Limelight!
-    " ...
-  endfunction
-
-  autocmd! User GoyoEnter nested call <SID>goyo_enter()
-  autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-  " Markdown
-  let g:vim_markdown_new_list_item_indent = 2
-  let g:vim_markdown_frontmatter = 1
-
-'' else "")
-+ ''
-  """
   """ Lua config starts here
   """
 
@@ -260,6 +209,17 @@
 
   -- Use 24-bit colors.
   vim.o.termguicolors = true
+
+  ---
+  --- Vim plugins config starts here
+  ---
+
+  -- Rainbow Parentheses Improved
+  vim.g.rainbow_active = 1
+
+  -- Neomake
+  vim.fn['neomake#configure#automake']('w')
+  vim.g.neomake_open_list = 2
 
   require('telescope').setup()
   require('telescope').load_extension('fzf')
@@ -524,10 +484,55 @@
       capabilities = capabilities;
   }
 '' else "")
++ (if withWriting then ''
+  -- Markdown
+  vim.g.vim_markdown_new_list_item_indent = 2
+  vim.g.vim_markdown_frontmatter = 1
+
+  -- Setup zen-mode.
+  require("zen-mode").setup(
+  {
+    window = {
+      backdrop = 0.95,
+      width = 110,
+      height = 0.7,
+      options = {
+        signcolumn = "no",
+        number = false,
+        relativenumber = false,
+        cursorline = false,
+        cursorcolumn = false,
+        foldcolumn = "0",
+        scrolloff = 999,
+        list = false,
+      },
+    },
+    plugins = {
+      options = {
+        enabled = true,
+        ruler = false,
+        showcmd = false,
+        laststatus = 0,
+      },
+      twilight = { enabled = true },
+      gitsigns = { enabled = false },
+      tmux = { enabled = true },
+      alacritty = {
+        enabled = true,
+        font = "11",
+      },
+    },
+    on_open = function(win)
+    end,
+    on_close = function()
+    end,
+  })
+'' else "")
 + (if withOCaml then ''
-  nvim_lsp.ocamllsp.setup{
-      on_attach = on_attach;
-      capabilities = capabilities;
+  nvim_lsp.ocamllsp.setup
+  {
+    on_attach = on_attach;
+    capabilities = capabilities;
   }
 '' else "")
   + ''

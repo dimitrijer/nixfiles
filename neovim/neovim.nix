@@ -102,7 +102,7 @@ pkgs.neovim.override {
         vim-sexp-mappings-for-regular-people # dsb, csb, cse...
       ] else [ ])
         ++ (if withHaskell then [ haskell-vim ] else [ ])
-        ++ (if withWriting then [ tabular vim-markdown goyo-vim limelight-vim ] else [ ])
+        ++ (if withWriting then [ tabular vim-markdown zen-mode-nvim twilight-nvim ] else [ ])
         # ++ (if withZettel then [ vimwiki vim-zettel ] else [ ])
         ++ [
         # Custom vim-codefmt.
