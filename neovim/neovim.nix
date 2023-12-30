@@ -24,16 +24,6 @@ let
     };
     meta.homepage = "https://github.com/flwyd/vim-conjoin";
   };
-  vim-lambdify = pkgs.vimUtils.buildVimPlugin {
-    name = "vim-lambdify";
-    src = pkgs.fetchFromGitHub {
-      owner = "calebsmith";
-      repo = "vim-lambdify";
-      rev = "58686218f0b0410acdb39575e7273147b5d024de";
-      sha256 = "1gkwghwbgcwj1f1lxp2gk3vg2zqqigdr1h6p7sl34nzwhklvwpd0";
-    };
-    meta.homepage = "https://github.com/calebsmith/vim-lambdify";
-  };
   vimPluginsLua = with pkgs.vimPlugins; [
     plenary-nvim
     (nvim-treesitter.withPlugins (
@@ -79,7 +69,6 @@ let
     rainbow # Pretty paren
     vim-highlightedyank # Highlight yanked regions
     vim-conjoin # Smart line join (J)
-    vim-lambdify # -> <bling> defn -> lambda symbol. </bling>
     quick-scope # Highlight next/previous chars in current line
     vim-codefmt # Google code formatter
 
