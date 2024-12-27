@@ -6,10 +6,11 @@ let
   };
   nixfiles = import ./default.nix { };
   neovim = nixfiles.neovim {
-    pkgs = pkgs;
+    inherit pkgs;
     withHaskell = true;
   };
-  python3 = nixfiles.python3 { pkgs = pkgs; };
+  python3 = nixfiles.python3 { inherit pkgs; };
+  tmux = nixfiles.tmux { inherit pkgs; };
 in
 pkgs.mkShell {
   buildInputs = with pkgs; [
@@ -20,5 +21,6 @@ pkgs.mkShell {
   ] ++ [
     neovim
     python3
+    tmux
   ];
 }
