@@ -221,6 +221,13 @@
   vim.fn['neomake#configure#automake']('w')
   vim.g.neomake_open_list = 2
 
+  -- Copilot
+  vim.api.nvim_set_keymap('i', '<Right>', 'copilot#Accept("\\<CR>")', {
+    expr = true,
+    replace_keycodes = false
+  })
+  vim.g.copilot_no_tab_map = true
+
   require('telescope').setup()
   require('telescope').load_extension('fzf')
   require('telescope').load_extension('ui-select')
