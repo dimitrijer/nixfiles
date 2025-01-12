@@ -85,6 +85,7 @@ let
     #lsp_signature-nvim # As you type fn arguments get type hints (too noisy)
     symbols-outline-nvim # LSP-powered outline bar
     trouble-nvim # LSP diagnostics
+    copilot-vim
   ];
 in
 pkgs.neovim.override {
