@@ -1,14 +1,19 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 
 with pkgs.python3Packages;
 buildPythonPackage rec {
   pname = "powerline-gitstatus";
-  version = "1.3.1";
+  version = "1.3.3";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "0k5m85vi8p7dzq5c0p60h5dnjm96wllxxp3zvvsfvh88h2jvnlim";
+  src = pkgs.fetchFromGitHub {
+    owner = "jaspernbrouwer";
+    repo = "powerline-gitstatus";
+    rev = "v1.3.3";
+    hash = "sha256-YhaGrxmNCnABfCa17rLVBVpQOhI54dKBEbDWohqmebE=";
   };
+
+  pyproject = true;
+  build-system = [ setuptools ];
 
   # Needs powerline, yet we want to add this dependency to powerline.
   doCheck = false;
