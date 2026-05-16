@@ -320,8 +320,6 @@
   vim.api.nvim_set_keymap('n', '<C-k>', ':NvimTreeToggle<CR>', mapping_opts)
   vim.api.nvim_set_keymap('n', '<C-a>', ':NvimTreeFindFile<CR>', mapping_opts)
 
-  local nvim_lsp = require 'lspconfig'
-
   -- Disable inline diagnostics.
   vim.diagnostic.config({virtual_text = true, update_on_insert = false})
   vim.api.nvim_create_autocmd("InsertEnter", {
@@ -463,14 +461,12 @@
   }
   require("luasnip.loaders.from_vscode").load()
 
-  -- Setup lspconfig.
-  if vim.fn.has('nvim-0.8') == 1
-  then
-      local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-  else
-      local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-  end
-  local configs = require('lspconfig/configs')
+  -- Default LSP capabilities (extended by nvim-cmp).
+  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+  vim.lsp.config('*', {
+    capabilities = capabilities,
+    on_attach = on_attach,
+  })
 
   vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({skip_groups = true, jump = true})<CR>]], mapping_opts)
   vim.api.nvim_set_keymap('n', '<leader>xx', [[<cmd>TroubleToggle<CR>]], mapping_opts)
@@ -478,18 +474,13 @@
   vim.cmd('colorscheme material')
 ''
 + (if withHaskell then ''
-  configs.hls = {
-   default_config = {
-     cmd = {'haskell-language-server-wrapper', '--lsp'};
-     filetypes = {'haskell', 'lhaskell'};
-     root_dir = nvim_lsp.util.root_pattern("stack.yaml", ".hie-bios", "WORKSPACE", "cabal.config", "package.yaml", "hie.yaml", "hie.yml");
-     settings = {};
-   };
-  }
-  nvim_lsp.hls.setup{
-      on_attach = on_attach;
-      capabilities = capabilities;
-  }
+  vim.lsp.config('hls', {
+    cmd = {'haskell-language-server-wrapper', '--lsp'},
+    filetypes = {'haskell', 'lhaskell'},
+    root_markers = {'stack.yaml', '.hie-bios', 'WORKSPACE', 'cabal.config', 'package.yaml', 'hie.yaml', 'hie.yml'},
+    settings = {},
+  })
+  vim.lsp.enable('hls')
 '' else "")
 + (if withWriting then ''
   -- Markdown
@@ -536,11 +527,7 @@
   })
 '' else "")
 + (if withOCaml then ''
-  nvim_lsp.ocamllsp.setup
-  {
-    on_attach = on_attach;
-    capabilities = capabilities;
-  }
+  vim.lsp.enable('ocamllsp')
 '' else "")
   + ''
   EOF
