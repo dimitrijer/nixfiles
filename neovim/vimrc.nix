@@ -325,13 +325,13 @@
   vim.api.nvim_create_autocmd("InsertEnter", {
     pattern = "*",
     callback = function()
-      vim.diagnostic.disable()
+      vim.diagnostic.enable(false)
     end
   })
   vim.api.nvim_create_autocmd("InsertLeave", {
     pattern = "*",
     callback = function()
-      vim.diagnostic.enable()
+      vim.diagnostic.enable(true)
     end
   })
 
