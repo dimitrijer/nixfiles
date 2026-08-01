@@ -271,9 +271,22 @@
 
   local ts_select = require('nvim-treesitter-textobjects.select')
   local ts_move = require('nvim-treesitter-textobjects.move')
+
+  local function has_parser(buf)
+    local lang = vim.treesitter.language.get_lang(vim.bo[buf].filetype)
+    if not lang then
+      return false
+    end
+    local ok, parser = pcall(vim.treesitter.get_parser, buf, lang, { error = false })
+    return ok and parser ~= nil
+  end
+
   local function map(modes, lhs, fn, query)
-    vim.keymap.set(modes, lhs, function() fn(query, 'textobjects') end,
-      { noremap = true, silent = true })
+    vim.keymap.set(modes, lhs, function()
+      if has_parser(0) then
+        fn(query, 'textobjects')
+      end
+    end, { noremap = true, silent = true })
   end
 
   -- You can use the capture groups defined in textobjects.scm

@@ -45,8 +45,7 @@ let
         tree-sitter-yaml
         tree-sitter-toml
         tree-sitter-python
-        # TS Haskell syntax is too colorful for me at the moment. vim-haskell it is.
-        # tree-sitter-haskell
+        tree-sitter-haskell
         tree-sitter-ocaml
         tree-sitter-clojure
       ]
@@ -102,7 +101,6 @@ pkgs.neovim.override {
         # (e.g. vaf, vae, vas)
         vim-sexp-mappings-for-regular-people # dsb, csb, cse...
       ] else [ ])
-        ++ (if withHaskell then [ haskell-vim ] else [ ])
         ++ (if withWriting then [ tabular vim-markdown zen-mode-nvim twilight-nvim ] else [ ]);
       # ++ (if withZettel then [ vimwiki vim-zettel ] else [ ])
     };
