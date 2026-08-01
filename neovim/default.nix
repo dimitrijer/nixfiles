@@ -80,6 +80,7 @@ let
     cmp-nvim-lsp # LSP completion
     cmp_luasnip # Snippet completion
     cmp-buffer # Completion of stuff that's in buffer
+    cmp-path # Filesystem path completion (the 'path' source below needs it)
 
     material-nvim # Colorscheme
     #lsp_signature-nvim # As you type fn arguments get type hints (too noisy)
@@ -102,12 +103,8 @@ pkgs.neovim.override {
         vim-sexp-mappings-for-regular-people # dsb, csb, cse...
       ] else [ ])
         ++ (if withHaskell then [ haskell-vim ] else [ ])
-        ++ (if withWriting then [ tabular vim-markdown zen-mode-nvim twilight-nvim ] else [ ])
-        # ++ (if withZettel then [ vimwiki vim-zettel ] else [ ])
-        ++ [
-        # Custom vim-codefmt.
-        vim-codefmt
-      ];
+        ++ (if withWriting then [ tabular vim-markdown zen-mode-nvim twilight-nvim ] else [ ]);
+      # ++ (if withZettel then [ vimwiki vim-zettel ] else [ ])
     };
   };
 }

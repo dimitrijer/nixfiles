@@ -133,6 +133,11 @@
   """
 
   lua <<EOF
+  -- nvim-tree requires netrw to be disabled as early as possible, before the
+  -- netrw plugin has a chance to load.
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+
   -- Disable mouse
   vim.o.mouse = ""
 
@@ -188,18 +193,23 @@
   vim.cmd [[highlight Folded ctermfg=darkgrey ctermbg=NONE]]
   vim.cmd [[highlight Conceal ctermfg=58 ctermbg=NONE]]
 
-  -- Sign icons
-  local signs = {
-      Error = "",
-      Warn = "",
-      Hint = "",
-      Info = "",
-      Other = ""
-  }
-  for type, icon in pairs(signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-  end
+  -- Sign icons.
+  vim.diagnostic.config({
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = '',
+        [vim.diagnostic.severity.WARN] = '',
+        [vim.diagnostic.severity.HINT] = '',
+        [vim.diagnostic.severity.INFO] = '',
+      },
+      numhl = {
+        [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+        [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+        [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+        [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+      },
+    },
+  })
 
   -- Persist the undo tree for each file
   vim.o.undofile = true
@@ -221,68 +231,71 @@
   vim.fn['neomake#configure#automake']('w')
   vim.g.neomake_open_list = 2
 
-  -- Copilot
-  vim.api.nvim_set_keymap('i', '<Right>', 'copilot#Accept("\\<CR>")', {
-    expr = true,
-    replace_keycodes = false
-  })
-  vim.g.copilot_no_tab_map = true
-
   require('telescope').setup()
   require('telescope').load_extension('fzf')
   require('telescope').load_extension('ui-select')
 
-  require('trouble').setup({
-    auto_open = false,
-    auto_close = false,
-    use_diagnostic_signs = true
-  })
-
+  require('trouble').setup()
   require('gitsigns').setup()
 
-  require('nvim-treesitter.configs').setup {
-    highlight = {
-      enable = true,
+  require('nvim-treesitter-textobjects').setup {
+    select = {
+      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+      lookbehind = false,
     },
-    indent = {
-      enable = true,
-    },
-    textobjects = {
-      select = {
-        enable = true,
-        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-        keymaps = {
-          -- You can use the capture groups defined in textobjects.scm
-          ['af'] = '@function.outer',
-          ['if'] = '@function.inner',
-          ['ac'] = '@class.outer',
-          ['ic'] = '@class.inner',
-        },
-      },
-      move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-         [']m'] = '@function.outer',
-          [']]'] = '@class.outer',
-        },
-        goto_next_end = {
-          [']M'] = '@function.outer',
-          [']['] = '@class.outer',
-        },
-        goto_previous_start = {
-          ['[m'] = '@function.outer',
-          ['[['] = '@class.outer',
-        },
-        goto_previous_end = {
-          ['[M'] = '@function.outer',
-          ['[]'] = '@class.outer',
-        },
-      },
+    move = {
+      set_jumps = true, -- whether to set jumps in the jumplist
     },
   }
 
+  -- Highlighting and indentation are opt-in per buffer.
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = '*',
+    callback = function(args)
+      local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+      if not lang then
+        return
+      end
+      -- Only enable where parser from Nix is present.
+      if not pcall(vim.treesitter.start, args.buf, lang) then
+        return
+      end
+      vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end,
+  })
+
+  vim.g.no_python_maps = true
+  vim.g.no_go_maps = true
+  vim.g.no_vim_maps = true
+  vim.g.no_ocaml_maps = true
+
+  local ts_select = require('nvim-treesitter-textobjects.select')
+  local ts_move = require('nvim-treesitter-textobjects.move')
+  local function map(modes, lhs, fn, query)
+    vim.keymap.set(modes, lhs, function() fn(query, 'textobjects') end,
+      { noremap = true, silent = true })
+  end
+
+  -- You can use the capture groups defined in textobjects.scm
+  local sel = { 'x', 'o' }
+  map(sel, 'af', ts_select.select_textobject, '@function.outer')
+  map(sel, 'if', ts_select.select_textobject, '@function.inner')
+  map(sel, 'ac', ts_select.select_textobject, '@class.outer')
+  map(sel, 'ic', ts_select.select_textobject, '@class.inner')
+
+  local mv = { 'n', 'x', 'o' }
+  map(mv, ']m', ts_move.goto_next_start, '@function.outer')
+  map(mv, ']]', ts_move.goto_next_start, '@class.outer')
+  map(mv, ']M', ts_move.goto_next_end, '@function.outer')
+  map(mv, '][', ts_move.goto_next_end, '@class.outer')
+  map(mv, '[m', ts_move.goto_previous_start, '@function.outer')
+  map(mv, '[[', ts_move.goto_previous_start, '@class.outer')
+  map(mv, '[M', ts_move.goto_previous_end, '@function.outer')
+  map(mv, '[]', ts_move.goto_previous_end, '@class.outer')
+
   require('nvim-tree').setup()
+
+  require('symbols-outline').setup()
  
   require('lualine').setup {
     options = {
@@ -337,10 +350,9 @@
 
   local on_attach = function(client, bufnr)
      -- Omnifunc mapping is <C-x><C-o>.
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
     -- Mappings.
     local opts = { noremap = true, silent = true }
@@ -353,33 +365,39 @@
     buf_set_keymap('n', '<leader>D', [[<cmd>lua vim.lsp.buf.type_definition()<CR>]], opts)
     buf_set_keymap('n', '<leader>rn', [[<cmd>lua vim.lsp.buf.rename()<CR>]], opts)
     buf_set_keymap('n', '<leader>ac', [[<cmd>lua vim.lsp.buf.code_action()<CR>]], opts)
-    buf_set_keymap('n', '<leader>e', [[<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>]], opts)
-    buf_set_keymap('n', '[d', [[<cmd>lua vim.diagnostic.goto_prev()<CR>]], opts)
-    buf_set_keymap('n', ']d', [[<cmd>lua vim.diagnostic.goto_next()<CR>]], opts)
-    -- buf_set_keymap('n', '<leader>q', [[<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>]], opts)
-    buf_set_keymap('n', '<leader>Q', [[<cmd>lua vim.lsp.diagnostic.set_qflist()<CR>]], opts)
+    buf_set_keymap('n', '<leader>e', [[<cmd>lua vim.diagnostic.open_float()<CR>]], opts)
+    buf_set_keymap('n', '[d', [[<cmd>lua vim.diagnostic.jump({ count = -1, float = true })<CR>]], opts)
+    buf_set_keymap('n', ']d', [[<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>]], opts)
+    -- buf_set_keymap('n', '<leader>q', [[<cmd>lua vim.diagnostic.setloclist()<CR>]], opts)
+    buf_set_keymap('n', '<leader>Q', [[<cmd>lua vim.diagnostic.setqflist()<CR>]], opts)
     -- buf_set_keymap('n', '<C-s>', [[<cmd>lua vim.lsp.buf.signature_help()<CR>]], opts)
 
-    -- Set some keybinds conditional on server capabilities
-    if client.server_capabilities.document_formatting then
-      buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    if client.server_capabilities.documentFormattingProvider then
+      buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
     end
-    if client.server_capabilities.document_range_formatting then
-      buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    if client.server_capabilities.documentRangeFormattingProvider then
+      buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
     end
 
     -- Set autocommands conditional on server_capabilities
-    if client.server_capabilities.document_highlight then
-      vim.api.nvim_exec([[
+    if client.server_capabilities.documentHighlightProvider then
+      vim.cmd [[
         hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
         hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
         hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-        augroup lsp_document_highlight
-          autocmd! * <buffer>
-          autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-          autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-        augroup END
-      ]], false)
+      ]]
+      local group = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
+      vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
+      vim.api.nvim_create_autocmd('CursorHold', {
+        group = group,
+        buffer = bufnr,
+        callback = vim.lsp.buf.document_highlight,
+      })
+      vim.api.nvim_create_autocmd('CursorMoved', {
+        group = group,
+        buffer = bufnr,
+        callback = vim.lsp.buf.clear_references,
+      })
     end
 
     --require "lsp_signature".on_attach({
@@ -448,18 +466,17 @@
     })
   })
 
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
     sources = {
       { name = 'buffer' }
     }
   })
 
-  -- Load friendly snippets.
   luasnip.config.set_config {
       history = true,
   }
-  require("luasnip.loaders.from_vscode").load()
+  require("luasnip.loaders.from_vscode").lazy_load()
 
   -- Default LSP capabilities (extended by nvim-cmp).
   local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -468,18 +485,12 @@
     on_attach = on_attach,
   })
 
-  vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({skip_groups = true, jump = true})<CR>]], mapping_opts)
-  vim.api.nvim_set_keymap('n', '<leader>xx', [[<cmd>TroubleToggle<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({ mode = 'diagnostics', jump = true })<CR>]], mapping_opts)
+  vim.api.nvim_set_keymap('n', '<leader>xx', [[<cmd>Trouble diagnostics toggle<CR>]], mapping_opts)
 
   vim.cmd('colorscheme material')
 ''
 + (if withHaskell then ''
-  vim.lsp.config('hls', {
-    cmd = {'haskell-language-server-wrapper', '--lsp'},
-    filetypes = {'haskell', 'lhaskell'},
-    root_markers = {'stack.yaml', '.hie-bios', 'WORKSPACE', 'cabal.config', 'package.yaml', 'hie.yaml', 'hie.yml'},
-    settings = {},
-  })
   vim.lsp.enable('hls')
 '' else "")
 + (if withWriting then ''
