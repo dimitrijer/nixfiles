@@ -565,6 +565,25 @@
   })
 '' else "")
 + (if withOCaml then ''
+  -- Jumping to a definition in a dependency lands in a read-only source file
+  -- under /nix/store, and nvim starts a *second* ocamllsp rooted there. That
+  -- copy has no dune context -- no .merlin-conf, no build artefacts -- so
+  -- merlin resolves nothing and every cross-module reference comes back as
+  -- "Unbound module ...". The file is perfectly readable; it is the server
+  -- that is useless, so don't start one. Not calling on_dir declines to
+  -- attach; otherwise fall through the same marker tiers lspconfig uses.
+  vim.lsp.config('ocamllsp', {
+    root_dir = function(bufnr, on_dir)
+      local name = vim.api.nvim_buf_get_name(bufnr)
+      if name:find('^/nix/store/') then
+        return
+      end
+      on_dir(vim.fs.root(bufnr, { 'dune-project', 'dune-workspace' })
+        or vim.fs.root(bufnr, { '*.opam', 'opam', 'esy.json', 'package.json' })
+        or vim.fs.root(bufnr, { '.git' }))
+    end,
+  })
+
   vim.lsp.enable('ocamllsp')
 '' else "")
   + ''
