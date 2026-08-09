@@ -495,7 +495,21 @@
   local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   vim.lsp.config('*', {
     capabilities = capabilities,
-    on_attach = on_attach,
+  })
+
+  -- on_attach deliberately does *not* go in the '*' config above. Resolving a
+  -- server config deep-merges the wildcard with the server's own, so a plain
+  -- value like a function is replaced rather than combined -- and 26 of the
+  -- 400-odd configs nvim-lspconfig ships define an on_attach of their own.
+  -- ocamllsp is one of them, which silently cost every mapping below on OCaml
+  -- buffers. LspAttach fires for every client, so both run.
+  vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if client then
+        on_attach(client, args.buf)
+      end
+    end,
   })
 
   vim.api.nvim_set_keymap('n', '<leader><CR>', [[<cmd>lua require('trouble').next({ mode = 'diagnostics', jump = true })<CR>]], mapping_opts)

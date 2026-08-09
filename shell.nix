@@ -7,6 +7,7 @@ let
   neovim = nixfiles.neovim {
     inherit pkgs;
     withHaskell = true;
+    withOCaml = true;
   };
   python3 = nixfiles.python3 { inherit pkgs; };
   tmux = nixfiles.tmux { inherit pkgs; };
